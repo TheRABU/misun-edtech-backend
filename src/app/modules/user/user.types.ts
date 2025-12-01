@@ -1,8 +1,13 @@
+export enum Role {
+  STUDENT = "STUDENT",
+  ADMIN = "ADMIN",
+}
+
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role: "student" | "admin";
+  role: Role;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;

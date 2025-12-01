@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { UserServices } from "./user.service";
 import { User } from "./user.model";
 
 const createUserWithEmailPassword = async (
