@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcryptjs";
 
 import { IUser } from "./user.types";
 
@@ -38,11 +39,10 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-// userSchema.pre("save", async function (next) {
-//   if (!this.isModified("password")) return next();
-//   this.password = await bcrypt.hash(this.password, 12);
-//   next();
-// });
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = await bcrypt.hash(this.password, 12);
+});
 
 // userSchema.methods.comparePassword = async function (
 //   candidatePassword: string
