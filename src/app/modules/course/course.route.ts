@@ -17,6 +17,11 @@ courseRoutes.post(
 );
 
 courseRoutes.put("/:id", checkAuth(Role.ADMIN), CourseControllers.updateCourse);
+courseRoutes.delete(
+  "/:id",
+  checkAuth(Role.ADMIN),
+  CourseControllers.deleteCourse
+);
 
 courseRoutes.get("/:id", CourseControllers.getCourse);
 

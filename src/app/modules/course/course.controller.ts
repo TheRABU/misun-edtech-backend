@@ -67,7 +67,11 @@ const getCourse = async (req: Request, res: Response, next: NextFunction) => {
       data: course,
     });
   } catch (error) {
-    next(error);
+    console.log("Sorry could not get course right now", error);
+    return res.status(500).json({
+      success: false,
+      message: "Sorry could not get course right now",
+    });
   }
 };
 
@@ -138,7 +142,11 @@ const getAllCourses = async (
       },
     });
   } catch (error) {
-    next(error);
+    console.log("Sorry could not get course right now", error);
+    return res.status(500).json({
+      success: false,
+      message: "Sorry could not get any courses right now",
+    });
   }
 };
 
@@ -171,7 +179,47 @@ const updateCourse = async (
       data: course,
     });
   } catch (error) {
-    next(error);
+    console.log("Sorry could not update course right now", error);
+    return res.status(500).json({
+      success: false,
+      message: "Sorry could not update course right now",
+    });
+  }
+};
+
+const deleteCourse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    //   const course = await Course.findOneAndUpdate(
+    //     { _id: id, isDeleted: false },
+    //     { $set: { isDeleted: true } },
+    //     { new: true }
+    //   );
+    const course = await Course.findByIdAndDelete({ _id: id });
+
+    if (!course) {
+      res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Course deleted successfully",
+    });
+  } catch (error) {
+    console.log("Sorry could not update course right now", error);
+    return res.status(500).json({
+      success: false,
+      message: "Sorry could not delete course right now",
+    });
   }
 };
 
@@ -180,4 +228,5 @@ export const CourseControllers = {
   getCourse,
   getAllCourses,
   updateCourse,
+  deleteCourse,
 };
