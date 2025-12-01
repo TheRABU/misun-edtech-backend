@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UserServices } from "./user.service";
+import { User } from "./user.model";
 
 const createUserWithEmailPassword = async (
   req: Request,
@@ -7,9 +8,7 @@ const createUserWithEmailPassword = async (
   next: NextFunction
 ) => {
   try {
-    const { payload } = req.body;
-
-    const { email, password, name } = payload;
+    const { email, password, name } = req.body;
 
     if (!email) {
       return res.status(400).json({
@@ -29,8 +28,20 @@ const createUserWithEmailPassword = async (
         message: "Name is required!",
       });
     }
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists with this email!",
+      });
+    }
+    const payload = {
+      email,
+      name,
+      password,
+    };
 
-    const user = await UserServices.createUserService(payload);
+    const user = await User.create(payload);
 
     res.status(200).json({
       success: true,
