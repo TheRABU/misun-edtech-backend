@@ -35,7 +35,7 @@ const createUserWithEmailPassword = async (
     res.status(200).json({
       success: true,
       message: "User created successfully! Please login",
-      user,
+      data: user,
     });
   } catch (error) {
     console.log("error creating new user try later", error);
