@@ -1,11 +1,14 @@
 import type { Server } from "http";
 import app from "./app";
+import { connectDatabase } from "./app/db/connectDB";
 
 let server: Server | undefined;
 const PORT = process.env.PORT || 5000;
 
 async function startServer() {
   try {
+    await connectDatabase();
+    console.log("DB connection successful");
     server = app.listen(PORT, () => {
       console.log("Server started and running OK!");
     });
