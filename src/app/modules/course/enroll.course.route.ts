@@ -5,6 +5,8 @@ import { enrollCourseSchema } from "./course.validation";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.types";
 
+/// http://localhost:5000/api/v1/courses/enroll
+
 const enrollRoutes = Router();
 
 enrollRoutes.post(
@@ -13,5 +15,23 @@ enrollRoutes.post(
   validateRequest(enrollCourseSchema),
   EnrollControllers.enrollCourse
 );
+
+enrollRoutes.get(
+  "/my-enrollments",
+  checkAuth(Role.STUDENT),
+  EnrollControllers.getMyEnrollments
+);
+
+enrollRoutes.get("/:courseId", EnrollControllers.getCourseEnrollments);
+
+enrollRoutes.post("/complete-module", EnrollControllers.markModuleComplete);
+
+// progress
+enrollRoutes.get(
+  "/:enrollmentId/progress",
+  EnrollControllers.getEnrollmentProgress
+);
+
+enrollRoutes.delete("/:enrollmentId", EnrollControllers.unenrollCourse);
 
 export default enrollRoutes;
