@@ -3,7 +3,7 @@ export enum Role {
   ADMIN = "ADMIN",
 }
 
-export interface IUser extends Document {
+export interface IUser {
   name: string;
   email: string;
   password: string;

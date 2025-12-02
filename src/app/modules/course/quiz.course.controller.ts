@@ -4,6 +4,13 @@ import { Quiz } from "./course.quiz.model";
 import { Enrollment } from "./enroll.course.model";
 import { QuizAttempt } from "./course.quiz.attempt.model";
 
+interface IUserAnswerPayload {
+  questionIndex: number;
+  selectedAnswer: number;
+}
+
+/// routes starts here
+
 const createQuiz = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { courseId, moduleId } = req.body;
@@ -196,7 +203,7 @@ const attemptQuiz = async (req: Request, res: Response, next: NextFunction) => {
     let totalPoints = 0;
     let earnedPoints = 0;
 
-    const evaluatedAnswers = answers.map((answer) => {
+    const evaluatedAnswers = (answers as IUserAnswerPayload[]).map((answer) => {
       const question = quiz.questions[answer.questionIndex];
 
       if (!question) {
@@ -223,7 +230,11 @@ const attemptQuiz = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     quiz.questions.forEach((q) => {
-      if (!answers.some((a) => a.questionIndex === quiz.questions.indexOf(q))) {
+      if (
+        !(answers as IUserAnswerPayload[]).some(
+          (a) => a.questionIndex === quiz.questions.indexOf(q)
+        )
+      ) {
         totalPoints += q.points;
       }
     });

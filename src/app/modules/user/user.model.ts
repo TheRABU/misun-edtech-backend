@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 
-import { IUser } from "./user.types";
+import { IUser, Role } from "./user.types";
 
 const userSchema = new Schema<IUser>(
   {
@@ -26,8 +26,8 @@ const userSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["student", "admin"],
-      default: "student",
+      enum: Object.values(Role),
+      default: Role.STUDENT,
     },
     isDeleted: {
       type: Boolean,
@@ -41,6 +41,7 @@ const userSchema = new Schema<IUser>(
 
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
+
   this.password = await bcrypt.hash(this.password, 12);
 });
 

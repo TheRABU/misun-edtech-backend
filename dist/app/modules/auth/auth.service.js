@@ -1,0 +1,65 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuthServices = void 0;
+const jwt_1 = require("../../../utils/jwt");
+const AppError_1 = __importDefault(require("../../helpers/AppError"));
+const user_model_1 = require("../user/user.model");
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const credentialsLoginService = (payload, req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = payload;
+    if (!email) {
+        return res.status(400).json({
+            success: false,
+            message: "Email must be included!",
+        });
+        throw new AppError_1.default(400, "Email must be included!");
+    }
+    if (!password) {
+        return res.status(400).json({
+            success: false,
+            message: "Password must be included!",
+        });
+        throw new AppError_1.default(400, "Password must be included!");
+    }
+    const isUserExist = yield user_model_1.User.findOne({ email }).select("+password");
+    if (!isUserExist) {
+        return res.status(404).json({
+            success: false,
+            message: "User does not exist!",
+        });
+        throw new AppError_1.default(400, "User does not exist");
+    }
+    const isPasswordMatched = yield bcryptjs_1.default.compare(password, isUserExist.password);
+    if (!isPasswordMatched) {
+        return res.status(400).json({
+            success: false,
+            message: "Incorrect Password!",
+        });
+        throw new Error("Incorrect Password");
+    }
+    const jwtPayload = {
+        userId: isUserExist._id,
+        email: isUserExist.email,
+        role: isUserExist.role,
+    };
+    const accessToken = (0, jwt_1.generateToken)(jwtPayload, process.env.JWT_ACCESS_SECRET, process.env.JWT_ACCESS_EXPIRES);
+    return {
+        accessToken,
+        user: isUserExist,
+    };
+});
+exports.AuthServices = {
+    credentialsLoginService,
+};
