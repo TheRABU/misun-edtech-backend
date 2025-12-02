@@ -3,6 +3,7 @@ import userRoutes from "../modules/user/user.routes";
 import authRoutes from "../modules/auth/auth.route";
 import courseRoutes from "../modules/course/course.route";
 import enrollRoutes from "../modules/course/enroll.course.route";
+import assignmentRoutes from "../modules/course/assignment.course.route";
 
 export const router = Router();
 
@@ -22,6 +23,10 @@ const moduleRoutes = [
   {
     path: "/courses/enroll",
     route: enrollRoutes,
+  },
+  {
+    path: "/courses/assignments",
+    route: assignmentRoutes,
   },
 ];
 
