@@ -7,6 +7,8 @@ import { Role } from "../user/user.types";
 
 const quizRoutes = Router();
 
+//// /api/v1/courses/quiz
+
 quizRoutes.post(
   "/",
   checkAuth(Role.ADMIN),
