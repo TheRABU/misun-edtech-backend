@@ -14,6 +14,7 @@ const course_model_1 = require("./course.model");
 const course_quiz_model_1 = require("./course.quiz.model");
 const enroll_course_model_1 = require("./enroll.course.model");
 const course_quiz_attempt_model_1 = require("./course.quiz.attempt.model");
+/// routes starts here
 const createQuiz = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { courseId, moduleId } = req.body;

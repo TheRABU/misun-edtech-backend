@@ -48,6 +48,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const user_types_1 = require("./user.types");
 const userSchema = new mongoose_1.Schema({
     name: {
         type: String,
@@ -70,8 +71,8 @@ const userSchema = new mongoose_1.Schema({
     },
     role: {
         type: String,
-        enum: ["student", "admin"],
-        default: "student",
+        enum: Object.values(user_types_1.Role),
+        default: user_types_1.Role.STUDENT,
     },
     isDeleted: {
         type: Boolean,
