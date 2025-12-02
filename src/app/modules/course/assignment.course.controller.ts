@@ -165,6 +165,79 @@ const deleteAssignment = async (
   }
 };
 
+const getAllSubmissions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { assignmentId } = req.params;
+
+    const submissions = await AssignmentSubmission.find({
+      assignmentId,
+      isDeleted: false,
+    })
+      .populate("userId", "name email")
+      .sort({ submittedAt: -1 })
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        total: submissions.length,
+        submissions,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const gradeAssignment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { submissionId, score, feedback } = req.body;
+
+    const submission = await AssignmentSubmission.findOne({
+      _id: submissionId,
+      isDeleted: false,
+    });
+
+    if (!submission) {
+      res.status(404).json({
+        success: false,
+        message: "Submission not found",
+      });
+      return;
+    }
+
+    const assignment = await Assignment.findById(submission.assignmentId);
+
+    if (assignment && score > assignment.maxScore) {
+      res.status(400).json({
+        success: false,
+        message: `Score cannot exceed maximum score of ${assignment.maxScore}`,
+      });
+      return;
+    }
+
+    submission.score = score;
+    submission.feedback = feedback;
+    await submission.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Assignment graded successfully",
+      data: submission,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // admin routes ends here
 
 // student related routes
@@ -251,11 +324,61 @@ const submitAssignment = async (
   }
 };
 
+const getMySubmissions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.userId;
+    const { courseId } = req.query;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const query: any = { userId, isDeleted: false };
+
+    const submissions = await AssignmentSubmission.find(query)
+      .populate({
+        path: "assignmentId",
+        select: "title courseId moduleId maxScore",
+        populate: {
+          path: "courseId",
+          select: "title",
+        },
+      })
+      .sort({ submittedAt: -1 })
+      .lean();
+
+    let filteredSubmissions = submissions;
+
+    if (courseId) {
+      filteredSubmissions = submissions.filter(
+        (sub: any) => sub.assignmentId?.courseId?._id.toString() === courseId
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      data: filteredSubmissions,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const AssignmentControllers = {
   createAssignment,
   getAssignmentsByCourse,
   getAssignmentById,
+  getAllSubmissions,
   updateAssignment,
+  gradeAssignment,
   deleteAssignment,
   submitAssignment,
+  getMySubmissions,
 };

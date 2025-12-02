@@ -29,7 +29,26 @@ assignmentRoutes.delete(
   checkAuth(Role.ADMIN),
   AssignmentControllers.deleteAssignment
 );
+assignmentRoutes.get(
+  "/submissions",
+  checkAuth(Role.ADMIN),
+  AssignmentControllers.getAllSubmissions
+);
+assignmentRoutes.post(
+  "/grade",
+  checkAuth(Role.ADMIN),
+  AssignmentControllers.gradeAssignment
+);
 
 // student routes
-
+assignmentRoutes.post(
+  "/submit",
+  checkAuth(Role.STUDENT),
+  AssignmentControllers.submitAssignment
+);
+assignmentRoutes.get(
+  "/my-submissions/all",
+  checkAuth(Role.STUDENT),
+  AssignmentControllers.getMySubmissions
+);
 export default assignmentRoutes;
