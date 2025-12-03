@@ -301,6 +301,46 @@ const unenrollCourse = async (
   }
 };
 
+const checkEnrollment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.userId;
+    const { courseId } = req.params;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+    const enrollment = await Enrollment.findOne({
+      userId,
+      courseId,
+      isDeleted: false,
+    });
+    if (enrollment) {
+      return res.status(200).json({
+        success: true,
+        enrolled: true,
+        enrollmentId: enrollment._id,
+      });
+    } else {
+      return res.status(200).json({
+        success: true,
+        enrolled: false,
+      });
+    }
+  } catch (error) {
+    console.log("Cannot check enrollment now! Some error occurred", error);
+    return res.status(500).json({
+      success: false,
+      message: "Cannot check enrollment now! Some error occurred",
+    });
+  }
+};
+
 export const EnrollControllers = {
   enrollCourse,
   getMyEnrollments,
@@ -308,4 +348,5 @@ export const EnrollControllers = {
   getEnrollmentProgress,
   markModuleComplete,
   unenrollCourse,
+  checkEnrollment,
 };

@@ -22,13 +22,24 @@ enrollRoutes.get(
   EnrollControllers.getMyEnrollments
 );
 
+enrollRoutes.get(
+  "/check/:courseId",
+  checkAuth(Role.STUDENT),
+  EnrollControllers.checkEnrollment
+);
+
 enrollRoutes.get("/:courseId", EnrollControllers.getCourseEnrollments);
 
-enrollRoutes.post("/complete-module", EnrollControllers.markModuleComplete);
+enrollRoutes.post(
+  "/complete-module",
+  checkAuth(Role.STUDENT),
+  EnrollControllers.markModuleComplete
+);
 
 // progress
 enrollRoutes.get(
-  "/:enrollmentId/progress",
+  "/progress/:enrollmentId",
+  checkAuth(Role.STUDENT),
   EnrollControllers.getEnrollmentProgress
 );
 
