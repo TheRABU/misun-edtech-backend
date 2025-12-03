@@ -6,7 +6,7 @@ import { User } from "../modules/user/user.model";
 declare global {
   namespace Express {
     interface Request {
-      user?: JwtPayload;
+      user?: JwtPayload | string;
     }
   }
 }

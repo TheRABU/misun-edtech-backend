@@ -9,6 +9,8 @@ const courseRoutes = Router();
 
 /// http://localhost:5000/api/v1/courses
 
+courseRoutes.get("/", CourseControllers.getAllCourses);
+
 courseRoutes.post(
   "/add-course",
   checkAuth(Role.ADMIN),
@@ -16,15 +18,12 @@ courseRoutes.post(
   CourseControllers.addCourse
 );
 
+courseRoutes.get("/:id", CourseControllers.getCourse);
 courseRoutes.put("/:id", checkAuth(Role.ADMIN), CourseControllers.updateCourse);
 courseRoutes.delete(
   "/:id",
   checkAuth(Role.ADMIN),
   CourseControllers.deleteCourse
 );
-
-courseRoutes.get("/:id", CourseControllers.getCourse);
-
-courseRoutes.get("/", CourseControllers.getAllCourses);
 
 export default courseRoutes;

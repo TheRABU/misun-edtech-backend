@@ -120,12 +120,7 @@ const getAllCourses = async (
     const sort: any = { [sortBy]: sortOrder };
 
     const [courses, total] = await Promise.all([
-      Course.find(query)
-        .select("-modules")
-        .skip(skip)
-        .limit(limit)
-        .sort(sort)
-        .lean(),
+      Course.find(query).skip(skip).limit(limit).sort(sort).lean(),
       Course.countDocuments(query),
     ]);
 

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { User } from "./user.model";
+import { JwtPayload } from "jsonwebtoken";
 
 const createUserWithEmailPassword = async (
   req: Request,
@@ -53,6 +54,43 @@ const createUserWithEmailPassword = async (
   }
 };
 
+const getMe = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized - No user data",
+      });
+    }
+
+    const decodedToken = req.user as JwtPayload;
+
+    const userId = decodedToken?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized - No user ID",
+      });
+    }
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    console.log("error fetching user data", error);
+    next();
+  }
+};
+
 export const UserControllers = {
   createUserWithEmailPassword,
+  getMe,
 };

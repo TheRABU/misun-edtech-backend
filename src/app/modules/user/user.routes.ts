@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { UserControllers } from "./user.controller";
+import { checkAuth } from "../../middlewares/checkAuth";
+import { Role } from "./user.types";
 
 const userRoutes = Router();
 
 userRoutes.post("/register", UserControllers.createUserWithEmailPassword);
+userRoutes.get("/me", checkAuth(...Object.values(Role)), UserControllers.getMe);
 
 export default userRoutes;
