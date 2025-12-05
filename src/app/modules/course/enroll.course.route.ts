@@ -22,6 +22,7 @@ enrollRoutes.get(
   EnrollControllers.getMyEnrollments
 );
 
+// check enrollment
 enrollRoutes.get(
   "/check/:courseId",
   checkAuth(Role.STUDENT),

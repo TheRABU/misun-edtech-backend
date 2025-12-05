@@ -1,6 +1,7 @@
 import type { Server } from "http";
 import app from "./app";
 import { connectDatabase } from "./app/db/connectDB";
+import { seedAdmin } from "./utils/seedAdmin";
 
 let server: Server | undefined;
 const PORT = process.env.PORT || 5000;
@@ -19,6 +20,7 @@ async function startServer() {
 
 (async () => {
   startServer();
+  await seedAdmin();
 })();
 
 process.on("SIGTERM", () => {

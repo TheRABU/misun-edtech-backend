@@ -12,7 +12,7 @@ const courseRoutes = Router();
 courseRoutes.get("/", CourseControllers.getAllCourses);
 
 courseRoutes.post(
-  "/add-course",
+  "/",
   checkAuth(Role.ADMIN),
   validateRequest(createCourseSchema),
   CourseControllers.addCourse
